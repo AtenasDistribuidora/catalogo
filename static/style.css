@@ -508,3 +508,36 @@ text-decoration:none;
 
 border-radius:12px;
 }
+.editar-form{
+display:grid;
+gap:12px;
+margin-top:10px;
+}
+
+.editar-form select{
+
+padding:14px;
+
+border:none;
+
+border-radius:12px;
+
+background:#2e2e2e;
+
+color:white;
+
+outline:none;
+}
+
+.editar-form input{
+
+padding:14px;
+
+border:none;
+
+border-radius:12px;
+
+background:#2e2e2e;
+
+color:white;
+}

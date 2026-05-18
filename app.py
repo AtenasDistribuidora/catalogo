@@ -149,20 +149,26 @@ def editar(id):
 
     produto.nome = request.form["nome"]
 
+    produto.categoria = request.form["categoria"]
+
+    ordem = request.form.get(
+        "ordem",
+        "999"
+    )
+
+    try:
+        produto.ordem = int(ordem)
+    except:
+        produto.ordem = 999
+
     preco = request.form["preco"]
+
     preco = preco.replace(",", ".")
 
     try:
         produto.preco = float(preco)
     except:
         return redirect("/admin")
-
-    ordem = request.form.get("ordem", "999")
-
-    try:
-        produto.ordem = int(ordem)
-    except:
-        produto.ordem = 999
 
     db.session.commit()
 
