@@ -99,10 +99,57 @@ type="number"
 step="0.01"
 value="{{p.preco}}">
 
-<input
-name="ordem"
-type="number"
-value="{{p.ordem}}">
+<select name="categoria">
+
+<option value="Destilados"
+{% if p.categoria=="Destilados" %}
+selected
+{% endif %}
+>
+Destilados
+</option>
+
+<option value="Whisky"
+{% if p.categoria=="Whisky" %}
+selected
+{% endif %}
+>
+Whisky
+</option>
+
+<option value="Vinhos"
+{% if p.categoria=="Vinhos" %}
+selected
+{% endif %}
+>
+Vinhos
+</option>
+
+<option value="Gin"
+{% if p.categoria=="Gin" %}
+selected
+{% endif %}
+>
+Gin
+</option>
+
+<option value="Mercearia"
+{% if p.categoria=="Mercearia" %}
+selected
+{% endif %}
+>
+Mercearia
+</option>
+
+<option value="Tabacaria"
+{% if p.categoria=="Tabacaria" %}
+selected
+{% endif %}
+>
+Tabacaria
+</option>
+
+</select>
 
 <button>
 Salvar alterações
