@@ -13,8 +13,8 @@ app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 db = SQLAlchemy(app)
 
-ADMIN = "admin"
-SENHA = "123456"
+ADMIN = "Atenas"
+SENHA = "159357"
 
 
 class Produto(db.Model):
