@@ -150,24 +150,31 @@ position:fixed;
 top:20px;
 left:20px;
 
-padding:12px 22px;
+padding:12px 20px;
 
-background:rgba(255,255,255,.12);
-
-color:white;
-
-border-radius:12px;
-
-text-decoration:none;
+background:rgba(20,20,20,.85);
 
 backdrop-filter:blur(10px);
 
+color:white;
+
+text-decoration:none;
+
+border-radius:14px;
+
 box-shadow:
-0 5px 15px rgba(0,0,0,.4);
+0 8px 20px rgba(0,0,0,.45);
+
+z-index:99999;
 
 transition:.3s;
 
-z-index:999;
+border:1px solid rgba(255,255,255,.1);
+}
+
+.admin-btn:hover{
+transform:translateY(-3px);
+background:rgba(50,50,50,.95);
 }
 
 .admin-btn:hover{
