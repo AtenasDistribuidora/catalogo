@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+<title>Login Admin</title>
+</head>
+<body>
+
+<div class="login-bg">
+
+<a href="/" class="voltar-login">
+← Voltar ao catálogo
+</a>
+
+<div class="login-card">
+
+<div class="login-logo">
+⚙
+</div>
+
+<h1>Painel Administrativo</h1>
+<p>Faça login para editar o catálogo</p>
+
+<form method="POST">
+
+<input
+name="usuario"
+placeholder="Usuário"
+required>
+
+<input
+type="password"
+name="senha"
+placeholder="Senha"
+required>
+
+<button>
+Entrar
+</button>
+
+</form>
+
+</div>
+</div>
+
+</body>
+</html>

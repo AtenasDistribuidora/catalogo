@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="{{url_for('static',filename='style.css')}}">
+<title>Painel Admin</title>
+</head>
+
+<body>
+
+<div class="admin-top">
+
+<a href="/" class="voltar-btn">
+🏠 Página inicial
+</a>
+
+<a href="/logout" class="sair-btn">
+Sair
+</a>
+
+</div>
+
+<div class="admin-box">
+
+<h1>Painel Administrativo</h1>
+
+<form
+class="form-produto"
+method="POST"
+action="/adicionar"
+enctype="multipart/form-data">
+
+<input
+required
+name="nome"
+placeholder="Nome do produto">
+
+<input
+required
+name="preco"
+type="number"
+step="0.01"
+placeholder="Preço">
+
+<input
+name="ordem"
+type="number"
+placeholder="Posição (1,2,3...)">
+
+<select name="categoria">
+
+<option>Destilados</option>
+<option>Whisky</option>
+<option>Vinhos</option>
+<option>Gin</option>
+<option>Mercearia</option>
+<option>Tabacaria</option>
+
+</select>
+
+<input
+required
+type="file"
+name="imagem">
+
+<button>
+Adicionar produto
+</button>
+
+</form>
+
+</div>
+
+<h2 class="titulo-lista">
+Produtos cadastrados
+</h2>
+
+<div class="lista-admin">
+
+{% for p in produtos %}
+
+<div class="produto-admin">
+
+<img
+src="{{url_for('static',filename='uploads/'+p.imagem)}}">
+
+<form
+method="POST"
+action="/editar/{{p.id}}">
+
+<input
+name="nome"
+value="{{p.nome}}">
+
+<input
+name="preco"
+type="number"
+step="0.01"
+value="{{p.preco}}">
+
+<input
+name="ordem"
+type="number"
+value="{{p.ordem}}">
+
+<button>
+Salvar alterações
+</button>
+
+</form>
+
+<a
+class="excluir"
+href="/excluir/{{p.id}}">
+Excluir
+</a>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>
