@@ -29,8 +29,13 @@
 <div class="card">
 <img src="{{url_for('static',filename='uploads/'+p.imagem)}}">
 <div class="overlay">
+
 <h3>{{p.nome}}</h3>
-<span>R$ {{p.preco}}</span>
+
+<div class="preco">
+R$ {{p.preco}}
+</div>
+
 </div>
 </div>
 {% endfor %}
