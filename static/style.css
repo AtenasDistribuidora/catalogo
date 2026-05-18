@@ -145,7 +145,7 @@ font-weight:bold;
 /* BOTAO ADMIN */
 
 .admin-btn{
-position:relative;
+position:static;
 
 top:20px;
 left:20px;
