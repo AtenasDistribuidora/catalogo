@@ -30,26 +30,31 @@ class Produto(db.Model):
 def home():
 
     categoria = request.args.get("cat")
+    busca = request.args.get("q","")
+
+    produtos = Produto.query
 
     if categoria:
-        produtos = (
-            Produto.query
-            .filter_by(categoria=categoria)
-            .order_by(Produto.ordem.asc())
-            .all()
+        produtos = produtos.filter_by(
+            categoria=categoria
         )
-    else:
-        produtos = (
-            Produto.query
-            .order_by(Produto.ordem.asc())
-            .all()
+
+    if busca:
+        produtos = produtos.filter(
+            Produto.nome.ilike(
+                f"%{busca}%"
+            )
         )
+
+    produtos = produtos.order_by(
+        Produto.ordem.asc()
+    ).all()
 
     return render_template(
         "index.html",
-        produtos=produtos
+        produtos=produtos,
+        busca=busca
     )
-
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
