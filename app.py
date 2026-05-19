@@ -8,7 +8,22 @@ app = Flask(__name__)
 
 app.secret_key = "admin123"
 
-app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.db"
+import os
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL:
+    DATABASE_URL = DATABASE_URL.replace(
+        "postgres://",
+        "postgresql://",
+        1
+    )
+
+app.config["SQLALCHEMY_DATABASE_URI"] = (
+    DATABASE_URL
+    or
+    "sqlite:///database.db"
+)
 app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 db = SQLAlchemy(app)
@@ -128,7 +143,24 @@ def adicionar():
         nome_arquivo
     )
 
-    arquivo.save(caminho)
+    import uuid
+
+nome_unico = (
+    str(uuid.uuid4())
+    + "_"
+    + secure_filename(
+        arquivo.filename
+    )
+)
+
+arquivo.save(
+os.path.join(
+app.config["UPLOAD_FOLDER"],
+nome_unico
+)
+)
+
+imagem=nome_unico
 
     produto = Produto(
         nome=nome,
@@ -144,34 +176,28 @@ def adicionar():
     return redirect("/admin")
 
 
-@app.route("/editar/<int:id>", methods=["POST"])
+@app.route("/editar/<int:id>",methods=["POST"])
 def editar(id):
 
     if not session.get("admin"):
         return redirect("/login")
 
-    produto = Produto.query.get_or_404(id)
+    produto=Produto.query.get_or_404(id)
 
-    produto.nome = request.form["nome"]
+    produto.nome=request.form["nome"]
 
-    produto.categoria = request.form["categoria"]
+    produto.categoria=request.form["categoria"]
 
-    ordem = request.form.get(
-        "ordem",
-        "999"
+    produto.ordem=int(
+        request.form["ordem"]
     )
 
-    try:
-        produto.ordem = int(ordem)
-    except:
-        produto.ordem = 999
+    preco=request.form["preco"]
 
-    preco = request.form["preco"]
-
-    preco = preco.replace(",", ".")
+    preco=preco.replace(",", ".")
 
     try:
-        produto.preco = float(preco)
+        produto.preco=float(preco)
     except:
         return redirect("/admin")
 
@@ -227,3 +253,9 @@ with app.app_context():
 
 if __name__ == "__main__":
     app.run()
+    @app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
