@@ -134,7 +134,10 @@ Produtos cadastrados
 
 <div class="produto-admin">
 
-<img src="{{p.imagem}}">
+<img
+src="{{ p.imagem if p.imagem else '/static/sem-imagem.png' }}"
+alt="{{ p.nome }}"
+loading="lazy">
 
 <h3>{{p.nome}}</h3>
 

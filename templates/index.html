@@ -43,7 +43,10 @@ Buscar
 <div class="grid">
 {% for p in produtos %}
 <div class="card">
-<img src="{{p.imagem}}">
+<img
+src="{{ p.imagem if p.imagem else '/static/sem-imagem.png' }}"
+alt="{{ p.nome }}"
+loading="lazy">
 <div class="overlay">
 
 <h3>{{p.nome}}</h3>
