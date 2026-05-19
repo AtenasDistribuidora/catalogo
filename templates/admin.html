@@ -1,128 +1,145 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <link rel="stylesheet"
 href="{{url_for('static',filename='style.css')}}">
+
 <title>Painel Admin</title>
+
 </head>
 
 <body>
 
 <div class="painel-header">
 
-<div>
-<span class="tag-admin">
-Painel Administrativo
-</span>
+    <div>
 
-<h1>
-Atenas Distribuidora
-</h1>
+        <span class="tag-admin">
+            Painel Administrativo
+        </span>
 
-<p>
-Gerencie produtos, categorias, preços e ordem de exibição
-</p>
+        <h1>Atenas Distribuidora</h1>
+
+        <p>
+            Gerencie produtos, categorias,
+            preços e ordem de exibição
+        </p>
+
+    </div>
+
+    <div class="admin-acoes">
+
+        <a href="/" class="voltar-btn">
+            🏠 Página inicial
+        </a>
+
+        <a href="/logout" class="sair-btn">
+            Sair
+        </a>
+
+    </div>
+
 </div>
 
-<div class="admin-acoes">
 
-<a href="/" class="voltar-btn">
-🏠 Página inicial
-</a>
-
-<a href="/logout" class="sair-btn">
-Sair
-</a>
-
-</div>
-
-</div>
-
+<!-- ESTATÍSTICAS -->
 
 <div class="stats">
 
-<div class="stat-card">
+    <div class="stat-card">
 
-<div class="numero">
-{{produtos|length}}
+        <div class="numero">
+            {{produtos|length}}
+        </div>
+
+        <span>
+            Produtos cadastrados
+        </span>
+
+    </div>
+
+
+    <div class="stat-card">
+
+        <div class="numero">
+            6
+        </div>
+
+        <span>
+            Categorias
+        </span>
+
+    </div>
+
 </div>
 
-<span>
-Produtos cadastrados
-</span>
 
-</div>
-
-<div class="stat-card">
-
-<div class="numero">
-6
-</div>
-
-<span>
-Categorias
-</span>
-
-</div>
-
-</div>
-
-
+<!-- CADASTRAR -->
 
 <div class="admin-box">
 
-<h2>
-Adicionar produto
-</h2>
+    <h2>Adicionar produto</h2>
 
-<form
-class="form-produto"
-method="POST"
-action="/adicionar"
-enctype="multipart/form-data">
+    <form
+        class="form-produto"
+        method="POST"
+        action="/adicionar"
+        enctype="multipart/form-data"
+    >
 
-<input
-required
-name="nome"
-placeholder="Nome do produto">
+        <input
+            required
+            name="nome"
+            placeholder="Nome do produto"
+        >
 
-<input
-required
-name="preco"
-placeholder="Preço">
+        <input
+            required
+            name="preco"
+            placeholder="Preço"
+        >
 
-<input
-name="ordem"
-type="number"
-value="999"
-placeholder="Ordem">
+        <input
+            name="ordem"
+            type="number"
+            value="999"
+            placeholder="Ordem"
+        >
 
-<select name="categoria">
-<option>Destilados</option>
-<option>Whisky</option>
-<option>Vinhos</option>
-<option>Gin</option>
-<option>Mercearia</option>
-<option>Tabacaria</option>
-</select>
+        <select name="categoria">
 
-<label>Imagem do produto</label>
+            <option>Destilados</option>
+            <option>Whisky</option>
+            <option>Vinhos</option>
+            <option>Gin</option>
+            <option>Mercearia</option>
+            <option>Tabacaria</option>
 
-<input
-required
-type="file"
-name="imagem"
-accept="image/*">
+        </select>
 
-<button>
-Adicionar produto
-</button>
+        <label class="upload-label">
+            Imagem do produto
+        </label>
 
-</form>
+        <input
+            required
+            type="file"
+            name="imagem"
+            accept="image/*"
+        >
+
+        <button>
+            Adicionar produto
+        </button>
+
+    </form>
 
 </div>
+
 
 
 <h2 class="titulo-lista">
@@ -138,8 +155,9 @@ Produtos cadastrados
 
 <img
 src="{{ p.imagem if p.imagem else '/static/sem-imagem.png' }}"
-alt="{{ p.nome }}"
+alt="{{p.nome}}"
 loading="lazy">
+
 
 <h3>{{p.nome}}</h3>
 
@@ -147,40 +165,86 @@ loading="lazy">
 {{p.categoria}}
 </div>
 
+
 <form
 class="editar-form"
 method="POST"
-action="/editar/{{p.id}}">
+action="/editar/{{p.id}}"
+>
 
 <input
 name="nome"
-value="{{p.nome}}">
+value="{{p.nome}}"
+placeholder="Nome"
+>
 
 <input
 name="preco"
 step="0.01"
-value="{{p.preco}}">
+value="{{p.preco}}"
+placeholder="Preço"
+>
 
 <input
 name="ordem"
 type="number"
-value="{{p.ordem}}">
+value="{{p.ordem}}"
+placeholder="Ordem"
+>
+
 
 <select name="categoria">
 
-<option {% if p.categoria=="Destilados" %}selected{% endif %}>Destilados</option>
+<option
+{% if p.categoria=="Destilados" %}
+selected
+{% endif %}
+>
+Destilados
+</option>
 
-<option {% if p.categoria=="Whisky" %}selected{% endif %}>Whisky</option>
+<option
+{% if p.categoria=="Whisky" %}
+selected
+{% endif %}
+>
+Whisky
+</option>
 
-<option {% if p.categoria=="Vinhos" %}selected{% endif %}>Vinhos</option>
+<option
+{% if p.categoria=="Vinhos" %}
+selected
+{% endif %}
+>
+Vinhos
+</option>
 
-<option {% if p.categoria=="Gin" %}selected{% endif %}>Gin</option>
+<option
+{% if p.categoria=="Gin" %}
+selected
+{% endif %}
+>
+Gin
+</option>
 
-<option {% if p.categoria=="Mercearia" %}selected{% endif %}>Mercearia</option>
+<option
+{% if p.categoria=="Mercearia" %}
+selected
+{% endif %}
+>
+Mercearia
+</option>
 
-<option {% if p.categoria=="Tabacaria" %}selected{% endif %}>Tabacaria</option>
+<option
+{% if p.categoria=="Tabacaria" %}
+selected
+{% endif %}
+>
+Tabacaria
+</option>
 
 </select>
+
 
 <button>
 Salvar alterações
@@ -188,11 +252,14 @@ Salvar alterações
 
 </form>
 
+
 <a
 class="excluir"
-href="/excluir/{{p.id}}">
+href="/excluir/{{p.id}}"
+>
 Excluir
 </a>
+
 
 </div>
 
