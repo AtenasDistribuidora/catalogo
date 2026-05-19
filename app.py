@@ -1,15 +1,22 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
-from werkzeug.utils import secure_filename
 from sqlalchemy import text
+import cloudinary
+import cloudinary.uploader
 import os
-import uuid
 
 app = Flask(__name__)
 
 app.secret_key = "admin123"
 
-# Banco local + Render PostgreSQL
+# Cloudinary
+cloudinary.config(
+    cloud_name=os.getenv("CLOUD_NAME"),
+    api_key=os.getenv("API_KEY"),
+    api_secret=os.getenv("API_SECRET")
+)
+
+# Banco local ou Render PostgreSQL
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
@@ -24,7 +31,6 @@ app.config["SQLALCHEMY_DATABASE_URI"] = (
 )
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 db = SQLAlchemy(app)
 
@@ -37,7 +43,7 @@ class Produto(db.Model):
     nome = db.Column(db.String(100))
     preco = db.Column(db.Float)
     categoria = db.Column(db.String(50))
-    imagem = db.Column(db.String(200))
+    imagem = db.Column(db.String(500))
     ordem = db.Column(db.Integer, default=999)
 
 
@@ -136,26 +142,24 @@ def adicionar():
     if arquivo.filename == "":
         return "Escolha uma imagem"
 
-    nome_unico = (
-        str(uuid.uuid4())
-        + "_"
-        + secure_filename(
-            arquivo.filename
+    try:
+
+        resultado = cloudinary.uploader.upload(
+            arquivo
         )
-    )
 
-    caminho = os.path.join(
-        app.config["UPLOAD_FOLDER"],
-        nome_unico
-    )
+        imagem_url = resultado[
+            "secure_url"
+        ]
 
-    arquivo.save(caminho)
+    except Exception as e:
+        return f"Erro ao enviar imagem: {e}"
 
     produto = Produto(
         nome=nome,
         preco=preco,
         categoria=categoria,
-        imagem=nome_unico,
+        imagem=imagem_url,
         ordem=ordem
     )
 
@@ -175,7 +179,9 @@ def editar(id):
 
     produto.nome = request.form["nome"]
 
-    produto.categoria = request.form["categoria"]
+    produto.categoria = request.form[
+        "categoria"
+    ]
 
     try:
         produto.ordem = int(
@@ -184,8 +190,9 @@ def editar(id):
     except:
         produto.ordem = 999
 
-    preco = request.form["preco"]
-    preco = preco.replace(",", ".")
+    preco = request.form[
+        "preco"
+    ].replace(",", ".")
 
     try:
         produto.preco = float(preco)
@@ -245,9 +252,8 @@ with app.app_context():
             db.session.commit()
 
         except Exception as e:
-            print("Erro:", e)
+            print(e)
 
 
 if __name__ == "__main__":
     app.run(debug=True)
-    

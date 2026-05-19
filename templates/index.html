@@ -43,7 +43,7 @@ Buscar
 <div class="grid">
 {% for p in produtos %}
 <div class="card">
-<img src="{{url_for('static',filename='uploads/'+p.imagem)}}">
+<img src="{{p.imagem}}">
 <div class="overlay">
 
 <h3>{{p.nome}}</h3>
