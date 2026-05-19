@@ -1,15 +1,15 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
-import os
 from sqlalchemy import text
+import os
+import uuid
 
 app = Flask(__name__)
 
 app.secret_key = "admin123"
 
-import os
-
+# Banco local + Render PostgreSQL
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if DATABASE_URL:
@@ -20,10 +20,10 @@ if DATABASE_URL:
     )
 
 app.config["SQLALCHEMY_DATABASE_URI"] = (
-    DATABASE_URL
-    or
-    "sqlite:///database.db"
+    DATABASE_URL or "sqlite:///database.db"
 )
+
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config["UPLOAD_FOLDER"] = "static/uploads"
 
 db = SQLAlchemy(app)
@@ -45,7 +45,7 @@ class Produto(db.Model):
 def home():
 
     categoria = request.args.get("cat")
-    busca = request.args.get("q","")
+    busca = request.args.get("q", "")
 
     produtos = Produto.query
 
@@ -71,6 +71,7 @@ def home():
         busca=busca
     )
 
+
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
@@ -92,11 +93,9 @@ def admin():
     if not session.get("admin"):
         return redirect("/login")
 
-    produtos = (
-        Produto.query
-        .order_by(Produto.ordem.asc())
-        .all()
-    )
+    produtos = Produto.query.order_by(
+        Produto.ordem.asc()
+    ).all()
 
     return render_template(
         "admin.html",
@@ -122,7 +121,10 @@ def adicionar():
 
     categoria = request.form["categoria"]
 
-    ordem = request.form.get("ordem", "999")
+    ordem = request.form.get(
+        "ordem",
+        "999"
+    )
 
     try:
         ordem = int(ordem)
@@ -134,39 +136,26 @@ def adicionar():
     if arquivo.filename == "":
         return "Escolha uma imagem"
 
-    nome_arquivo = secure_filename(
-        arquivo.filename
+    nome_unico = (
+        str(uuid.uuid4())
+        + "_"
+        + secure_filename(
+            arquivo.filename
+        )
     )
 
     caminho = os.path.join(
         app.config["UPLOAD_FOLDER"],
-        nome_arquivo
+        nome_unico
     )
 
-    import uuid
-
-nome_unico = (
-    str(uuid.uuid4())
-    + "_"
-    + secure_filename(
-        arquivo.filename
-    )
-)
-
-arquivo.save(
-os.path.join(
-app.config["UPLOAD_FOLDER"],
-nome_unico
-)
-)
-
-imagem=nome_unico
+    arquivo.save(caminho)
 
     produto = Produto(
         nome=nome,
         preco=preco,
         categoria=categoria,
-        imagem=nome_arquivo,
+        imagem=nome_unico,
         ordem=ordem
     )
 
@@ -176,28 +165,30 @@ imagem=nome_unico
     return redirect("/admin")
 
 
-@app.route("/editar/<int:id>",methods=["POST"])
+@app.route("/editar/<int:id>", methods=["POST"])
 def editar(id):
 
     if not session.get("admin"):
         return redirect("/login")
 
-    produto=Produto.query.get_or_404(id)
+    produto = Produto.query.get_or_404(id)
 
-    produto.nome=request.form["nome"]
+    produto.nome = request.form["nome"]
 
-    produto.categoria=request.form["categoria"]
-
-    produto.ordem=int(
-        request.form["ordem"]
-    )
-
-    preco=request.form["preco"]
-
-    preco=preco.replace(",", ".")
+    produto.categoria = request.form["categoria"]
 
     try:
-        produto.preco=float(preco)
+        produto.ordem = int(
+            request.form["ordem"]
+        )
+    except:
+        produto.ordem = 999
+
+    preco = request.form["preco"]
+    preco = preco.replace(",", ".")
+
+    try:
+        produto.preco = float(preco)
     except:
         return redirect("/admin")
 
@@ -208,6 +199,9 @@ def editar(id):
 
 @app.route("/excluir/<int:id>")
 def excluir(id):
+
+    if not session.get("admin"):
+        return redirect("/login")
 
     produto = Produto.query.get_or_404(id)
 
@@ -231,14 +225,17 @@ with app.app_context():
     db.create_all()
 
     try:
-        # verifica se a coluna já existe
+
         db.session.execute(
-            text("SELECT ordem FROM produto LIMIT 1")
+            text(
+                "SELECT ordem FROM produto LIMIT 1"
+            )
         )
 
     except:
 
         try:
+
             db.session.execute(
                 text(
                     "ALTER TABLE produto ADD COLUMN ordem INTEGER DEFAULT 999"
@@ -252,10 +249,5 @@ with app.app_context():
 
 
 if __name__ == "__main__":
-    app.run()
-    @app.route("/logout")
-def logout():
-
-    session.clear()
-
-    return redirect("/")
+    app.run(debug=True)
+    
